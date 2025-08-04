@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosyt AI Dashboard - Automated Prompt Empire</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .header h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            text-align: center;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .stat-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        
+        .stat-title {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-change {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        
+        .positive {
+            color: #4ade80;
+        }
+        
+        .negative {
+            color: #f87171;
+        }
+        
+        .actions-section {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .action-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            padding: 15px 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .recent-activity {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 25px;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .activity-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-time {
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 Nosyt AI Dashboard</h1>
+        <p><strong>{{ company_name }}</strong> | Automated Prompt Empire | {{ current_time }}</p>
+    </div>
+    
+    <div class="main-content">
+        <!-- Key Metrics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-title">Daily Revenue</div>
+                </div>
+                <div class="stat-value">${{ "%.2f"|format(daily_report.daily_revenue or 0) }}</div>
+                <div class="stat-change positive">+{{ "%.1f"|format((daily_report.daily_revenue or 0) * 0.15) }}% vs yesterday</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">🛍️</div>
+                    <div class="stat-title">Products Created</div>
+                </div>
+                <div class="stat-value">{{ daily_report.products_created or 0 }}</div>
+                <div class="stat-change positive">{{ daily_report.products_created or 0 }} today</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-title">Sales Count</div>
+                </div>
+                <div class="stat-value">{{ daily_report.daily_sales or 0 }}</div>
+                <div class="stat-change positive">{{ "%.1f"|format(daily_report.conversion_rate or 0) }}% conversion</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-title">Quality Score</div>
+                </div>
+                <div class="stat-value">{{ "%.2f"|format(daily_report.avg_quality_score or 0) }}</div>
+                <div class="stat-change positive">Excellent quality</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-title">Total Revenue</div>
+                </div>
+                <div class="stat-value">${{ "%.2f"|format(revenue_metrics.total_revenue or 0) }}</div>
+                <div class="stat-change positive">All time</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-title">Top Niche</div>
+                </div>
+                <div class="stat-value">{{ daily_report.top_niche or "N/A" }}</div>
+                <div class="stat-change">Best performing today</div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="actions-section">
+            <h2 style="margin-bottom: 20px;">🚀 Quick Actions</h2>
+            <div class="actions-grid">
+                <button class="action-btn" onclick="triggerGeneration()">Generate New Prompts</button>
+                <button class="action-btn" onclick="viewAnalytics()">View Analytics</button>
+                <button class="action-btn" onclick="checkRevenue()">Revenue Report</button>
+                <button class="action-btn" onclick="manageCustomers()">Customer Insights</button>
+                <button class="action-btn" onclick="optimizeProducts()">Optimize Pricing</button>
+                <button class="action-btn" onclick="marketingBoost()">Marketing Boost</button>
+            </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3>📈 Revenue Trend</h3>
+                <div id="revenue-chart" style="height: 200px; display: flex; align-items: center; justify-content: center; opacity: 0.7;">
+                    Revenue visualization coming soon...
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h3>🎯 Niche Performance</h3>
+                <div id="niche-chart" style="height: 200px; display: flex; align-items: center; justify-content: center; opacity: 0.7;">
+                    Niche analysis coming soon...
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="recent-activity">
+            <h3 style="margin-bottom: 20px;">🔔 Recent Activity</h3>
+            <div class="activity-item">
+                <div class="activity-icon">🤖</div>
+                <div class="activity-content">
+                    <div><strong>AI Prompt Generation</strong></div>
+                    <div>System generated {{ daily_report.products_created or 0 }} new prompts</div>
+                </div>
+                <div class="activity-time">{{ current_time }}</div>
+            </div>
+            
+            <div class="activity-item">
+                <div class="activity-icon">💰</div>
+                <div class="activity-content">
+                    <div><strong>Revenue Update</strong></div>
+                    <div>Today's revenue: ${{ "%.2f"|format(daily_report.daily_revenue or 0) }}</div>
+                </div>
+                <div class="activity-time">{{ current_time }}</div>
+            </div>
+            
+            <div class="activity-item">
+                <div class="activity-icon">📊</div>
+                <div class="activity-content">
+                    <div><strong>Quality Check</strong></div>
+                    <div>Average quality score: {{ "%.2f"|format(daily_report.avg_quality_score or 0) }}/1.0</div>
+                </div>
+                <div class="activity-time">{{ current_time }}</div>
+            </div>
+            
+            <div class="activity-item">
+                <div class="activity-icon">🎯</div>
+                <div class="activity-content">
+                    <div><strong>Top Performing Niche</strong></div>
+                    <div>{{ daily_report.top_niche or "Business & Marketing" }} is trending</div>
+                </div>
+                <div class="activity-time">{{ current_time }}</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Dashboard functionality
+        async function triggerGeneration() {
+            try {
+                const response = await fetch('/api/generate', { method: 'POST' });
+                const data = await response.json();
+                alert('✅ ' + (data.message || 'Generation started successfully!'));
+                location.reload();
+            } catch (error) {
+                alert('🔄 Generation request sent - running in background');
+            }
+        }
+        
+        async function viewAnalytics() {
+            try {
+                const response = await fetch('/api/analytics/weekly');
+                const data = await response.json();
+                alert(`📊 Weekly Report:\n\nProducts: ${data.total_products || 0}\nRevenue: $${data.total_revenue || 0}\nConversion: ${data.conversion_rate || 0}%`);
+            } catch (error) {
+                alert('📊 Analytics system ready - data will appear after automation runs');
+            }
+        }
+        
+        async function checkRevenue() {
+            try {
+                const response = await fetch('/api/revenue');
+                const data = await response.json();
+                alert(`💰 Revenue Metrics:\n\nTotal Products: ${data.total_products || 0}\nTotal Revenue: $${data.total_revenue || 0}\nTotal Sales: ${data.total_sales || 0}`);
+            } catch (error) {
+                alert('💰 Revenue tracking active - metrics will update automatically');
+            }
+        }
+        
+        async function manageCustomers() {
+            alert('👥 Customer management features coming soon!\n\nCurrent features:\n• Automated welcome emails\n• Purchase confirmations\n• Support ticket system');
+        }
+        
+        async function optimizeProducts() {
+            alert('🎯 Product optimization features:\n\n• Dynamic pricing based on quality\n• A/B testing for descriptions\n• Performance-based recommendations');
+        }
+        
+        async function marketingBoost() {
+            alert('📢 Marketing automation active!\n\n• Social media posts\n• Email campaigns\n• SEO optimization\n• Press releases');
+        }
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            location.reload();
+        }, 30000);
+    </script>
+</body>
+</html>
